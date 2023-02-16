@@ -2,14 +2,15 @@ package com.ladecentro.controller;
 
 import com.ladecentro.entity.Address;
 import com.ladecentro.exception.GlobalException;
-import com.ladecentro.repository.AddressRepository;
 import com.ladecentro.service.AddressService;
+import com.ladecentro.util.UtilFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @Slf4j
@@ -18,20 +19,15 @@ import java.util.Objects;
 public class AddressController {
 
     @Autowired
-    private AddressRepository addressRepository;
+    UtilFunction utilFunction;
 
     @Autowired
     AddressService addressService;
 
-    /**
-     * get all addresses
-     *
-     * @param userId userId
-     * @return ResponseEntity
-     */
-    @GetMapping("/get_all/{user_id}")
-    public ResponseEntity<?> getAllAddresses(@PathVariable("user_id") Long userId) {
+    @GetMapping("/get_all")
+    public ResponseEntity<?> getAllAddresses(HttpServletRequest headers) {
 
+        Long userId = utilFunction.getUserIdFromToken(headers);
         if (Objects.isNull(userId)) {
             log.error(">>>> User id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "user id should not be null");
@@ -39,9 +35,10 @@ public class AddressController {
         return ResponseEntity.ok(addressService.getAllAddresses(userId));
     }
 
-    @GetMapping("/get/{user_id}/{id}")
-    public ResponseEntity<?> getAddress(@PathVariable("user_id") Long userId, @PathVariable("user_id") Long id) {
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getAddress(HttpServletRequest headers, @PathVariable("id") Long id) {
 
+        Long userId = utilFunction.getUserIdFromToken(headers);
         if (Objects.isNull(userId)) {
             log.error(">>>> User id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "user id should not be null");
@@ -50,12 +47,13 @@ public class AddressController {
             log.error(">>>> address id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "address id should not be null");
         }
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(addressService.getAddress(userId, id));
     }
 
-    @PostMapping("/create/{user_id}")
-    public ResponseEntity<?> createAddress(@PathVariable("user_id") Long userId, @RequestBody Address address) {
+    @PostMapping("/create")
+    public ResponseEntity<?> createAddress(HttpServletRequest headers, @RequestBody Address address) {
 
+        Long userId = utilFunction.getUserIdFromToken(headers);
         if (Objects.isNull(userId)) {
             log.error(">>>> User id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "user id should not be null");
@@ -63,9 +61,10 @@ public class AddressController {
         return ResponseEntity.ok(addressService.createAddress(userId, address));
     }
 
-    @PutMapping("/update/{user_id}/{id}")
-    public ResponseEntity<?> updateAddress(@PathVariable("user_id") Long userId, @PathVariable("id") Long id) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateAddress(HttpServletRequest headers, @PathVariable("id") Long id, @RequestBody Address address) {
 
+        Long userId = utilFunction.getUserIdFromToken(headers);
         if (Objects.isNull(userId)) {
             log.error(">>>> User id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "user id should not be null");
@@ -74,13 +73,13 @@ public class AddressController {
             log.error(">>>> address id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "address id should not be null");
         }
-
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(addressService.updateAddress(userId, id, address));
     }
 
-    @DeleteMapping("/delete/{user_id}/{id}")
-    public ResponseEntity<?> deleteAddress(@PathVariable("user_id") Long userId, @PathVariable("id") Long id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteAddress(HttpServletRequest headers, @PathVariable("id") Long id) {
 
+        Long userId = utilFunction.getUserIdFromToken(headers);
         if (Objects.isNull(userId)) {
             log.error(">>>> User id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "user id should not be null");
@@ -89,6 +88,6 @@ public class AddressController {
             log.error(">>>> address id should not be null");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "address id should not be null");
         }
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(addressService.deleteAddress(userId, id));
     }
 }

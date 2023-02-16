@@ -11,9 +11,9 @@ public interface AddressService {
 
     Address getAddress(Long userId, Long id);
 
-    Object createAddress(Long userId, Address address);
+    Address createAddress(Long userId, Address address);
 
-    ErrorResponse updateAddress(Long userId, Long id, Address address);
+    Address updateAddress(Long userId, Long id, Address address);
 
     ErrorResponse deleteAddress(Long userId, Long id);
 

@@ -10,7 +10,6 @@ import com.ladecentro.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
     BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public void createUser(SignupRequest request) {
+    public User createUser(SignupRequest request) {
 
         Optional<User> optional = userRepository.findByEmail(request.getEmail());
         if (optional.isPresent()) {
@@ -44,7 +43,7 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(request.getRoles());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

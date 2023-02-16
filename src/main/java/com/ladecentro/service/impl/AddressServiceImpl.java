@@ -57,7 +57,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public ErrorResponse updateAddress(Long userId, Long id, Address address) {
+    public Address updateAddress(Long userId, Long id, Address address) {
 
         Optional<Address> optional = addressRepository.findByUserIdAndId(userId, id);
         if (optional.isEmpty()) {
@@ -83,13 +83,20 @@ public class AddressServiceImpl implements AddressService {
         if (address.getState() != null) {
             address1.setState(address.getState());
         }
-        addressRepository.save(address1);
-        return null;
+        return addressRepository.save(address1);
     }
 
     @Override
     public ErrorResponse deleteAddress(Long userId, Long id) {
 
-        return null;
+        Integer isDeleted = addressRepository.deleteByUserIdAndId(userId, id);
+        if (isDeleted == 0) {
+            log.error(">>>> couldn't delete address");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "couldn't delete address");
+        }
+        ErrorResponse response = new ErrorResponse();
+        response.setStatus(isDeleted);
+        response.setMessage("Deleted successfully");
+        return response;
     }
 }

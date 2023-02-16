@@ -1,5 +1,6 @@
 package com.ladecentro.controller;
 
+import com.ladecentro.entity.User;
 import com.ladecentro.models.request.LoginRequest;
 import com.ladecentro.models.request.SignupRequest;
 import com.ladecentro.security.CustomUserService;
@@ -12,12 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -36,11 +36,13 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
 
-        userService.createUser(request);
-        UserDetails userDetails = new UserDetailsImpl(request.getEmail(), request.getPassword(), request.getRoles());
+        User user = userService.createUser(request);
+        UserDetails userDetails = new UserDetailsImpl(user.getEmail(), user.getPassword(), user.getRoles());
 
         log.info(">>>> user details : {}", userDetails);
-        String jwtToken = jwtUtil.generateToken(userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("user_id", user.getId());
+        String jwtToken = jwtUtil.generateToken(userDetails, claims);
 
         log.info(">>>> jwt token : {}", jwtToken);
         return ResponseEntity.ok(jwtToken);
@@ -53,8 +55,10 @@ public class AuthController {
                 loginRequest.getEmail(), loginRequest.getPassword()));
         UserDetails userDetails = customUserService.loadUserByUsername(loginRequest.getEmail());
 
-        log.info(">>>> user details : {}", userDetails);
-        String token = jwtUtil.generateToken(userDetails);
+        User user = userService.getUserByEmail(userDetails.getUsername());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("user_id", user.getId());
+        String token = jwtUtil.generateToken(userDetails, claims);
 
         log.info(">>>> jwt token : {}", token);
         return ResponseEntity.ok(token);

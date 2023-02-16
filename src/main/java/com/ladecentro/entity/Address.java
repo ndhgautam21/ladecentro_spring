@@ -1,6 +1,7 @@
 package com.ladecentro.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,18 +15,20 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "phone_no")
+    @JsonProperty("phone_no")
     private String phoneNo;
 
     @Column(name = "address")
     private String address;
 
     @Column(name = "pin_code")
+    @JsonProperty("pin_code")
     private String pinCode;
 
     @Column(name = "city")
