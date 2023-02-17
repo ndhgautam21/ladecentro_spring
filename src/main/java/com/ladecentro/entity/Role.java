@@ -2,6 +2,8 @@ package com.ladecentro.entity;
 
 import com.ladecentro.constant.Roles;
 import javax.persistence.*;
+import javax.validation.Valid;
+
 import lombok.Getter;
 import lombok.Setter;
 

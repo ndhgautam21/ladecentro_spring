@@ -12,9 +12,12 @@ public class UtilFunction {
     @Autowired
     JwtUtil jwtUtil;
 
+    private static final String X_AUTH_TOKEN = "x-auth-token";
+    private static final String USER_ID = "user_id";
+
     public Long getUserIdFromToken(HttpServletRequest headers) {
-        String token = headers.getHeader("x-auth-token");
-        return jwtUtil.extractClaim(token, claims -> claims.get("user_id", Long.class));
+        String token = headers.getHeader(X_AUTH_TOKEN);
+        return jwtUtil.extractClaim(token, claims -> claims.get(USER_ID, Long.class));
     }
 
 }
