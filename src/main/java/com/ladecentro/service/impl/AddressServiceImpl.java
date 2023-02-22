@@ -3,6 +3,7 @@ package com.ladecentro.service.impl;
 import com.ladecentro.entity.Address;
 import com.ladecentro.entity.User;
 import com.ladecentro.exception.GlobalException;
+import com.ladecentro.models.response.AddressResponse;
 import com.ladecentro.models.response.ErrorResponse;
 import com.ladecentro.repository.AddressRepository;
 import com.ladecentro.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -28,9 +30,10 @@ public class AddressServiceImpl implements AddressService {
     UserRepository userRepository;
 
     @Override
-    public List<Address> getAllAddresses(Long userId) {
+    public List<AddressResponse> getAllAddresses(Long userId) {
 
-        return addressRepository.findByUserId(userId);
+        List<Address> addresses= addressRepository.findByUserId(userId);
+        return addresses.stream().map(this::getAddressResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -97,6 +100,20 @@ public class AddressServiceImpl implements AddressService {
         ErrorResponse response = new ErrorResponse();
         response.setStatus(isDeleted);
         response.setMessage("Deleted successfully");
+        return response;
+    }
+
+    private AddressResponse getAddressResponse(Address address) {
+
+        String fullAddress = address.getAddress().concat(", ")
+                .concat(address.getCity()).concat(", ")
+                .concat(address.getState()).concat(" - ")
+                .concat(address.getPinCode());
+        AddressResponse response = new AddressResponse();
+        response.setId(address.getId());
+        response.setName(address.getName());
+        response.setAddress(fullAddress);
+        response.setPhone_no(address.getPhoneNo());
         return response;
     }
 }

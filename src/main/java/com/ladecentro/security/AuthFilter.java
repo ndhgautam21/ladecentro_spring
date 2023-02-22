@@ -4,7 +4,11 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ladecentro.exception.GlobalException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class AuthFilter extends OncePerRequestFilter {
 
@@ -28,15 +33,19 @@ public class AuthFilter extends OncePerRequestFilter {
 
         String jwtToken = request.getHeader("x-auth-token");
         if (jwtToken != null) {
-            String userName = jwtUtil.extractUsername(jwtToken);
-            if (userName == null || SecurityContextHolder.getContext().getAuthentication() != null) {
-                throw new RuntimeException("JWT is not valid");
+            try {
+                String userName = jwtUtil.extractUsername(jwtToken);
+                if (userName == null || SecurityContextHolder.getContext().getAuthentication() != null) {
+                    throw new GlobalException(HttpStatus.BAD_REQUEST, "JWT is not valid");
+                }
+                UserDetails userDetails = customUserService.loadUserByUsername(userName);
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            } catch (Exception e) {
+                log.error(">>>> Error in authentication : {}", e.getMessage());
             }
-            UserDetails userDetails = customUserService.loadUserByUsername(userName);
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         }
         filterChain.doFilter(request, response);
     }
