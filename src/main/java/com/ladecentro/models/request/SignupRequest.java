@@ -1,6 +1,6 @@
 package com.ladecentro.models.request;
 
-import com.ladecentro.entity.Role;
+import com.ladecentro.constant.Roles;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -27,5 +27,5 @@ public class SignupRequest {
     @Valid
     @NotNull(message = "roles should not be null")
     @NotEmpty(message = "select at least one role")
-    private Set<Role> roles;
+    private Set<Roles> roles;
 }

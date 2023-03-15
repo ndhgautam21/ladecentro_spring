@@ -1,16 +1,16 @@
 package com.ladecentro.repository;
 
 import com.ladecentro.entity.Address;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface AddressRepository extends JpaRepository<Address, Long> {
+public interface AddressRepository extends MongoRepository<Address, String> {
 
-    List<Address> findByUserId(Long userId);
+    List<Address> findByUserId(String userId);
 
-    Optional<Address> findByUserIdAndId(Long userId, Long id);
+    Optional<Address> findBy_idAndUserId(String id, String userId);
 
-    Integer deleteByUserIdAndId(Long userId, Long id);
+    Integer deleteBy_idAndUserId(String id, String UserId);
 }

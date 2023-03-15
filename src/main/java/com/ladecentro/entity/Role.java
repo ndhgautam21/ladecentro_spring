@@ -1,24 +1,17 @@
 package com.ladecentro.entity;
 
 import com.ladecentro.constant.Roles;
-import javax.persistence.*;
-import javax.validation.Valid;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
-@Entity
 @Getter
 @Setter
-@Table(name = "role")
 public class Role {
 
-    @Id
-    @Column(name = "role_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String _id;
 
-    @Column(name = "name")
-    @Enumerated(EnumType.STRING)
+    @Field(name = "name", targetType = FieldType.STRING)
     private Roles name;
 }

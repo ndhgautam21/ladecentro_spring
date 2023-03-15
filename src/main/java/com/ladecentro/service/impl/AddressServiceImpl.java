@@ -30,42 +30,42 @@ public class AddressServiceImpl implements AddressService {
     UserRepository userRepository;
 
     @Override
-    public List<AddressResponse> getAllAddresses(Long userId) {
+    public List<AddressResponse> getAllAddresses(String userId) {
 
-        List<Address> addresses= addressRepository.findByUserId(userId);
+        List<Address> addresses = addressRepository.findByUserId(userId);
         return addresses.stream().map(this::getAddressResponse).collect(Collectors.toList());
     }
 
     @Override
-    public Address getAddress(Long userId, Long id) {
+    public Address getAddress(String userId, String id) {
 
-        Optional<Address> optional = addressRepository.findByUserIdAndId(userId, id);
+        Optional<Address> optional = addressRepository.findBy_idAndUserId(id, userId);
         if (optional.isEmpty()) {
             log.error(">>>> address not found for user id : {} and id : {}", userId, id);
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "user not found");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "address not found");
         }
         return optional.get();
     }
 
     @Override
-    public Address createAddress(Long userId, Address address) {
+    public AddressResponse createAddress(String userId, Address address) {
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             log.error(">>>> user not found for user id : {}", user);
             throw new GlobalException(HttpStatus.BAD_REQUEST, "user not found");
         }
-        address.setUser(user.get());
-        return addressRepository.save(address);
+        address.setUserId(userId);
+        return getAddressResponse(addressRepository.save(address));
     }
 
     @Override
-    public Address updateAddress(Long userId, Long id, Address address) {
+    public Address updateAddress(String userId, String id, Address address) {
 
-        Optional<Address> optional = addressRepository.findByUserIdAndId(userId, id);
+        Optional<Address> optional = addressRepository.findBy_idAndUserId(id, userId);
         if (optional.isEmpty()) {
             log.error(">>>> address not found for user id : {} and id : {}", userId, id);
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "user not found");
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "address not found");
         }
         Address address1 = optional.get();
         if (address.getName() != null) {
@@ -90,9 +90,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public ErrorResponse deleteAddress(Long userId, Long id) {
+    public ErrorResponse deleteAddress(String userId, String id) {
 
-        Integer isDeleted = addressRepository.deleteByUserIdAndId(userId, id);
+        Integer isDeleted = addressRepository.deleteBy_idAndUserId(id, userId);
         if (isDeleted == 0) {
             log.error(">>>> couldn't delete address");
             throw new GlobalException(HttpStatus.BAD_REQUEST, "couldn't delete address");
@@ -110,7 +110,7 @@ public class AddressServiceImpl implements AddressService {
                 .concat(address.getState()).concat(" - ")
                 .concat(address.getPinCode());
         AddressResponse response = new AddressResponse();
-        response.setId(address.getId());
+        response.setId(address.get_id());
         response.setName(address.getName());
         response.setAddress(fullAddress);
         response.setPhone_no(address.getPhoneNo());

@@ -15,9 +15,9 @@ public class UtilFunction {
     private static final String X_AUTH_TOKEN = "x-auth-token";
     private static final String USER_ID = "user_id";
 
-    public Long getUserIdFromToken(HttpServletRequest headers) {
+    public String getUserIdFromToken(HttpServletRequest headers) {
         String token = headers.getHeader(X_AUTH_TOKEN);
-        return jwtUtil.extractClaim(token, claims -> claims.get(USER_ID, Long.class));
+        return jwtUtil.extractClaim(token, claims -> claims.get(USER_ID, String.class));
     }
 
 }

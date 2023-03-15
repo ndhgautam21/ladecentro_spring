@@ -1,6 +1,6 @@
 package com.ladecentro.security;
 
-import com.ladecentro.entity.Role;
+import com.ladecentro.constant.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,12 +17,12 @@ public class UserDetailsImpl implements UserDetails {
 
     private String username;
     private String password;
-    private Set<Role> roles;
+    private Set<Roles> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role ->
-                new SimpleGrantedAuthority(String.format("ROLE_%s", role.getName().name()))).collect(Collectors.toList());
+                new SimpleGrantedAuthority(String.format("ROLE_%s", role.name()))).collect(Collectors.toList());
     }
 
     @Override

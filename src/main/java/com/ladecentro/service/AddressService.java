@@ -8,14 +8,14 @@ import java.util.List;
 
 public interface AddressService {
 
-    List<AddressResponse> getAllAddresses(Long userId);
+    List<AddressResponse> getAllAddresses(String userId);
 
-    Address getAddress(Long userId, Long id);
+    Address getAddress(String userId, String id);
 
-    Address createAddress(Long userId, Address address);
+    AddressResponse createAddress(String userId, Address address);
 
-    Address updateAddress(Long userId, Long id, Address address);
+    Address updateAddress(String userId, String id, Address address);
 
-    ErrorResponse deleteAddress(Long userId, Long id);
+    ErrorResponse deleteAddress(String userId, String id);
 
 }

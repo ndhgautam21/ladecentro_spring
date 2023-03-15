@@ -1,46 +1,43 @@
 package com.ladecentro.entity;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ladecentro.constant.Roles;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.bson.types.Binary;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.List;
+import javax.persistence.Id;
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table(name = "user")
+@Document(collection = "user")
 public class User extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String _id;
 
-    @Column(name = "email", unique = true)
+    @Field(name = "email")
+    @Indexed(unique = true)
     private String email;
 
-    @Column(name = "password")
+    @Field(name = "password")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Column(name = "name")
+    @Field(name = "name")
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @ToString.Exclude
-    private Set<Role> roles;
+    @Field(name = "profile_image")
+    @JsonProperty("profile_image")
+    private Binary profileImage;
 
-    @ToString.Exclude
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Address> addresses;
+    private Set<Roles> roles;
 }

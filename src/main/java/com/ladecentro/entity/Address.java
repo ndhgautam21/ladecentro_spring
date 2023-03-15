@@ -1,44 +1,45 @@
 package com.ladecentro.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 
-@Entity
 @Getter
 @Setter
-@Table(name = "address")
-public class Address {
+@ToString
+@RequiredArgsConstructor
+@Document(collection = "address")
+public class Address extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String _id;
 
-    @Column(name = "name")
+    @Field(name = "name")
     private String name;
 
-    @Column(name = "phone_no")
+    @Field(name = "phone_no")
     @JsonProperty("phone_no")
     private String phoneNo;
 
-    @Column(name = "address")
+    @Field(name = "address")
     private String address;
 
-    @Column(name = "pin_code")
+    @Field(name = "pin_code")
     @JsonProperty("pin_code")
     private String pinCode;
 
-    @Column(name = "city")
+    @Field(name = "city")
     private String city;
 
-    @Column(name = "state")
+    @Field(name = "state")
     private String state;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Field(name = "user_id")
+    private String userId;
 }
